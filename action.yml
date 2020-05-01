@@ -2,19 +2,19 @@
 name: 'Deploy to Aptible'
 description: 'Deploy an app from a Dockerfile to Aptible'
 inputs:
-  APTIBLE_ROBOT_USERNAME:
+  username:
     description: 'Aptible username'
     required: True
-  APTIBLE_ROBOT_PASSWORD:
+  password:
     description: 'Aptible password'
     required: True
-  APTIBLE_ENVIRONMENT: 
+  environment: 
     description: 'Aptible environment'
     required: True
-  APTIBLE_APP: 
+  app: 
     description: 'App handle'
     required: True
-  DOCKER_IMG: 
+  docker_img: 
     description: 'Docker image'
     required: True
 outputs:
