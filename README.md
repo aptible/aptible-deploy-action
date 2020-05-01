@@ -19,10 +19,11 @@ aptible config:set \
 ## Secrets the action uses
 
 ## Environment variables the action uses
-* `APTIBLE_ROBOT_USERNAME` - passed to `aptible` CLI
-* `APTIBLE_ROBOT_PASSWORD` - passed to `aptible` CLI
-* `APTIBLE_ENVIRONMENT` - specifies App to be deployed
-* `APTIBLE_APP` - specifies App to be deployed
-* `DOCKER_IMG` - the name of the image you’d like to deploy, including its repository and tag
+#### The converstion from `var` to `INPUT_VAR` is [how GitHub Actions handle Inputs](https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions#inputs).
+* `username` - passed to `aptible` CLI
+* `password` - passed to `aptible` CLI
+* `environment` - specifies App to be deployed
+* `app` - specifies App to be deployed
+* `docker_img` - the name of the image you’d like to deploy, including its repository and tag
 
 ## Example workflow using the image
