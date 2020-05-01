@@ -19,5 +19,10 @@ aptible config:set \
 ## Secrets the action uses
 
 ## Environment variables the action uses
+* `APTIBLE_ROBOT_USERNAME` - passed to `aptible` CLI
+* `APTIBLE_ROBOT_PASSWORD` - passed to `aptible` CLI
+* `APTIBLE_ENVIRONMENT` - specifies App to be deployed
+* `APTIBLE_APP` - specifies App to be deployed
+* `DOCKER_IMG` - the name of the image you’d like to deploy, including its repository and tag
 
 ## Example workflow using the image
