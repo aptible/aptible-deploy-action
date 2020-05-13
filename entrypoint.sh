@@ -31,8 +31,8 @@ aptible login \
   --password "$INPUT_PASSWORD"
 
 if ! APTIBLE_OUTPUT_FORMAT=json aptible apps | jq -e ".[] | select(.handle == \"$INPUT_APP\") | select(.environment.handle == \"$INPUT_ENVIRONMENT\")" > /dev/null; then
-  echo "$0: skip (could not find app $INPUT_APP)" >&2
-  exit 0
+  echo "Could not find app $INPUT_APP in $INPUT_ENVIRONMENT" >&2
+  exit 1
 fi
 
 aptible deploy --environment "$INPUT_ENVIRONMENT" \
