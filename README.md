@@ -25,5 +25,24 @@ aptible config:set \
 * `environment` - specifies App to be deployed
 * `app` - specifies App to be deployed
 * `docker_img` - the name of the image you’d like to deploy, including its repository and tag
+* `private_registry_username` - the username for the private registry to pull a docker image from
+* `private_registry_password` - the password for the private registry to pull a docker image from
 
-## Example workflow using the image
+## Example github actions usage
+```yaml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to Aptible
+            uses: aptible/aptible-deploy-action@master
+            with:
+              username: <aptible username>
+              password: <aptible password>
+              environment: <environment name>
+              app: <app name>
+              docker_img: <docker image name>
+              private_registry_username: <username>
+              private_registry_password: <password>
+```
