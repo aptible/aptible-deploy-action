@@ -21,11 +21,6 @@ if [ -z "$INPUT_APP" ]; then
   exit 1
 fi
 
-if [ -z "$INPUT_DOCKER_IMG" ]; then
-  echo "Aborting: docker_img is not set"
-  exit 1
-fi
-
 aptible login \
   --email "$INPUT_USERNAME" \
   --password "$INPUT_PASSWORD"
@@ -35,8 +30,14 @@ if ! APTIBLE_OUTPUT_FORMAT=json aptible apps | jq -e ".[] | select(.handle == \"
   exit 1
 fi
 
-aptible deploy --environment "$INPUT_ENVIRONMENT" \
-               --app "$INPUT_APP" \
-               --docker-image "$INPUT_DOCKER_IMG" \
-               --private-registry-username "$INPUT_PRIVATE_REGISTRY_USERNAME" \
-               --private-registry-password "$INPUT_PRIVATE_REGISTRY_PASSWORD"
+if [ ! -z "$INPUT_DOCKER_IMG" ]; then
+  aptible deploy --environment "$INPUT_ENVIRONMENT" \
+                 --app "$INPUT_APP" \
+                 --docker-image "$INPUT_DOCKER_IMG" \
+                 --private-registry-username "$INPUT_PRIVATE_REGISTRY_USERNAME" \
+                 --private-registry-password "$INPUT_PRIVATE_REGISTRY_PASSWORD"
+else
+  aptible deploy --environment "$INPUT_ENVIRONMENT" \
+                 --app "$INPUT_APP"
+fi
+
