@@ -39,7 +39,7 @@ jobs:
 
     steps:
     - name: Deploy to Aptible
-      uses: aptible/aptible-deploy-action@master
+      uses: aptible/aptible-deploy-action@v1
       with:
         username: ${{ secrets.APTIBLE_USERNAME }}
         password: ${{ secrets.APTIBLE_PASSWORD }}
