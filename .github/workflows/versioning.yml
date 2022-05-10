@@ -1,0 +1,42 @@
+name: Keep the versions up-to-date
+# Source: https://github.com/tchupp/actions-update-semver-tags
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  release:
+    types:
+      - published
+
+jobs:
+  update-semver-tags:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Update Previous Tags
+        shell: bash
+        run: |
+          release_sha="${GITHUB_SHA}"
+          git_ref="${GITHUB_REF}"
+          git_ref_type=$(echo "${git_ref}" | cut -d '/' -f 2)
+          if [[ "${git_ref_type}" != "tags" ]]; then
+            echo "Action should only run for 'tags' refs, was: '${git_ref}'"
+            exit 0
+          fi
+          git_ref=$(echo "${git_ref}" | cut -d '/' -f 3-)
+          match="v[0-9]+.[0-9]+.[0-9]+"
+          if ! [[ "${git_ref}" =~ $match ]]; then
+            echo "Action should only run for tags that match the regex '$match', was: '${git_ref}'"
+            exit 0
+          fi
+          prefix=$(echo "${git_ref}" | sed -E 's/([^0-9]*)([0-9]*)\.([0-9]*)\.([0-9]*)/\1/')
+          major=$(echo "${git_ref}" | sed -E 's/([^0-9]*)([0-9]*)\.([0-9]*)\.([0-9]*)/\2/')
+          minor=$(echo "${git_ref}" | sed -E 's/([^0-9]*)([0-9]*)\.([0-9]*)\.([0-9]*)/\3/')
+          patch=$(echo "${git_ref}" | sed -E 's/([^0-9]*)([0-9]*)\.([0-9]*)\.([0-9]*)/\4/')
+          git tag -f "${prefix}${major}" "${release_sha}"
+          git tag -f "${prefix}${major}.${minor}" "${release_sha}"
+          git push --tags -f
