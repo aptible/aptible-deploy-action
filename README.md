@@ -14,38 +14,89 @@ aptible config:set \
 ## Inputs
 
 The following inputs can be used as `step.with` keys
+
 ### Required input
 
-* `username` - passed to `aptible` CLI
-* `password` - passed to `aptible` CLI
-* `environment` - specifies App to be deployed
-* `app` - specifies App to be deployed
-* `docker_img` - the name of the image you’d like to deploy, including its repository and tag
+- `username` - passed to `aptible` CLI
+- `password` - passed to `aptible` CLI
+- `environment` - specifies App to be deployed
+- `app` - specifies App to be deployed
+- `docker_img` - the name of the image you’d like to deploy, including its repository and tag
+
 ### Optional input
 
-* `private_registry_username` - the username for the private registry to pull a docker image from
-* `private_registry_password` - the password for the private registry to pull a docker image from
+- `private_registry_username` - the username for the private registry to pull a docker image from
+- `private_registry_password` - the password for the private registry to pull a docker image from
 
 ## Outputs
 
-* `status` - success/failure of the deploy
+- `status` - success/failure of the deploy
 
 ## Example github actions usage
+
 Assumes you have set [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets) (recommended).
+
 ```yaml
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Deploy to Aptible
-      uses: aptible/aptible-deploy-action@master
-      with:
-        username: ${{ secrets.APTIBLE_USERNAME }}
-        password: ${{ secrets.APTIBLE_PASSWORD }}
-        environment: <environment name>
-        app: <app name>
-        docker_img: <docker image name>
-        private_registry_username: ${{ secrets.REGISTRY_USERNAME }}
-        private_registry_password: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: Deploy to Aptible
+        uses: aptible/aptible-deploy-action@v1
+        with:
+          username: ${{ secrets.APTIBLE_USERNAME }}
+          password: ${{ secrets.APTIBLE_PASSWORD }}
+          environment: <environment name>
+          app: <app name>
+          docker_img: <docker image name>
+          private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+```
+
+## Example with Container Build and Docker Hub
+
+```yaml
+
+env:
+  IMAGE_NAME: user/app:latest
+  APTIBLE_ENVIRONMENT: "my_environment"
+  APTIBLE_APP: "my_app"
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+      # Allow multi platform builds.
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      # Allow use of secrets and other advanced docker features.
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Log into Docker Hub
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Build image using default dockerfile.
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: ${{ env.IMAGE_NAME }}
+
+      - name: Deploy to Aptible
+        uses: aptible/aptible-deploy-action@v1
+        with:
+          username: ${{ secrets.APTIBLE_USERNAME }}
+          password: ${{ secrets.APTIBLE_PASSWORD }}
+          environment: ${{ env.APTIBLE_ENVIRONMENT }}
+          app: ${{ env.APTIBLE_APP }}
+          docker_img: ${{ env.IMAGE_NAME }}
+          private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
 ```
