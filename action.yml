@@ -16,7 +16,14 @@ inputs:
     required: True
   docker_img: 
     description: 'Docker image'
-    required: True
+    required: False
+  git_deployment:
+    description: 'Deploy with git. If selected, this will be prioritized'
+    default: False
+    required: False
+  git_ssh_key:
+    description: 'Add a git ssh key. This must be added to the ssh keys on Aptible.'
+    required: False
   private_registry_username:
     description: 'Private Registry Username'
     required: False
@@ -28,4 +35,5 @@ outputs:
     description: "The Success/Failure of the action"
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'docker://quay.io/aptible/aptible-cli:latest'
+  entrypoint: 'action.sh'
