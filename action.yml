@@ -35,5 +35,5 @@ outputs:
     description: "The Success/Failure of the action"
 runs:
   using: 'docker'
-  image: 'docker://quay.io/aptible/aptible-cli:latest'
+  image: 'Dockerfile'
   entrypoint: 'action.sh'

@@ -51,7 +51,12 @@ execute_docker_deployment() {
 }
 
 execute_git_deployment() {
-
+  mkdir -p ~/.ssh 
+  echo "$INPUT_GIT_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+  chmod 600 ~/.ssh/id_rsa
+  ssh-add ~/.ssh/id_rsa
+  ssh-keyscan -H 'beta.aptible.com' >> ~/.ssh/known_hosts
+  git push aptible master:$GITHUB_SHA
 }
 
 ########################################
