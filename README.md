@@ -27,6 +27,7 @@ The following inputs can be used as `step.with` keys
 
 - `private_registry_username` - the username for the private registry to pull a docker image from
 - `private_registry_password` - the password for the private registry to pull a docker image from
+- `config_variables` - a space separated list of key=value pairs to set as config variables on the app during deployment
 
 ## Outputs
 
@@ -51,6 +52,7 @@ jobs:
           docker_img: <docker image name>
           private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
           private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+          config_variables: KEY1=value1 KEY2=value2
 ```
 
 ## Example with Container Build and Docker Hub
@@ -99,4 +101,5 @@ jobs:
           docker_img: ${{ env.IMAGE_NAME }}
           private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
           private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+          config_variables: RELEASE_SHA=${{ github.sha }}
 ```
