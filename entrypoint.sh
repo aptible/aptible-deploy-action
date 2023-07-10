@@ -40,4 +40,4 @@ aptible deploy --environment "$INPUT_ENVIRONMENT" \
                --docker-image "$INPUT_DOCKER_IMG" \
                --private-registry-username "$INPUT_PRIVATE_REGISTRY_USERNAME" \
                --private-registry-password "$INPUT_PRIVATE_REGISTRY_PASSWORD" \
-               ${INPUT_CONFIG_VARIABLES}
+               "${INPUT_CONFIG_VARIABLES}"
