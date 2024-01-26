@@ -1,22 +1,31 @@
-# action.yml
 name: 'Deploy to Aptible'
 description: 'Deploy an app from a Dockerfile to Aptible'
 inputs:
-  username:
-    description: 'Aptible username'
+  environment:
+    description: 'Aptible environment handle'
     required: True
-  password:
-    description: 'Aptible password'
-    required: True
-  environment: 
-    description: 'Aptible environment'
-    required: True
-  app: 
+  app:
     description: 'App handle'
     required: True
-  docker_img: 
-    description: 'Docker image'
+  type:
+    description: '"git" or "docker" deployment strategy'
     required: True
+  git_remote:
+    description: 'Aptible git remote domain'
+    required: False
+    default: git.aptible.com
+  private_key:
+    description: 'Private SSH Key for pushing to Aptible remote'
+    required: False
+  username:
+    description: 'Aptible username'
+    required: False
+  password:
+    description: 'Aptible password'
+    required: False
+  docker_img:
+    description: 'Docker image'
+    required: False
   private_registry_username:
     description: 'Private Registry Username'
     required: False
@@ -30,5 +39,29 @@ outputs:
    status:
     description: "The Success/Failure of the action"
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "composite"
+  steps:
+    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
+      shell: bash
+    - name: Docker Deploy
+      if: ${{ inputs.type == 'docker' }}
+      shell: bash
+      run: docker.sh
+      env:
+        INPUT_USERNAME: ${{ inputs.username }}
+        INPUT_PASSWORD: ${{ inputs.password }}
+        INPUT_DOCKER_IMG: ${{ inputs.docker_img }}
+        INPUT_ENVIRONMENT: ${{ inputs.environment }}
+        INPUT_APP: ${{ inputs.app }}
+        INPUT_CONFIG_VARIABLES: ${{ inputs.config_variables }}
+        INPUT_PRIVATE_REGISTRY_USERNAME: ${{ inputs.private_registry_username }}
+        INPUT_PRIVATE_REGISTRY_PASSWORD: ${{ inputs.private_registry_password }}
+    - name: Git Deploy
+      if: ${{ inputs.type == 'git' }}
+      shell: bash
+      run: git.sh
+      env:
+        INPUT_PRIVATE_KEY: ${{ inputs.private_key }}
+        INPUT_GIT_REMOTE: ${{ inputs.git_remote }}
+        INPUT_ENVIRONMENT: ${{ inputs.environment }}
+        INPUT_APP: ${{ inputs.app }}

@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 set -o errexit
 
+CLI_BUILD="217"
+CLI_VERSION="0.16.7"
+CLI_TIMESTAMP="20200812001454"
+
+sudo apt-get install -y jq u2f-host
+
+CLI_FILE="aptible-toolbelt_${CLI_VERSION}%2B${CLI_TIMESTAMP}~ubuntu.16.04-1_amd64.deb" && \
+    curl -fsSLO "https://omnibus-aptible-toolbelt.s3.amazonaws.com/aptible/omnibus-aptible-toolbelt/master/${CLI_BUILD}/pkg/${CLI_FILE}" && \
+    sudo dpkg -i "${CLI_FILE}"  && \
+    rm "${CLI_FILE}"
+
 if [ -z "$INPUT_USERNAME" ]; then
   echo "Aborting: username is not set"
   exit 1
