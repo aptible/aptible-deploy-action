@@ -24,7 +24,7 @@ The following inputs can be used as `step.with` keys
 - `config_variables` - JSON string containing the
   [configuration variables to set](https://www.aptible.com/docs/set-configuration-variables)
 
-> [!NOTICE]\
+> [!IMPORTANT]\
 > We do **not** recommend setting `config_variables` inside our github action
 > because those variables only need to be set once within Aptible for them to
 > persist across deployments.
@@ -91,7 +91,7 @@ The following inputs can be used as `step.with` keys
 - `config_variables` - JSON string containing the
   [configuration variables to set](https://www.aptible.com/docs/set-configuration-variables)
 
-> [!NOTICE]\
+> [!IMPORTANT]\
 > We do **not** recommend setting `config_variables` inside our github action
 > because those variables only need to be set once within Aptible for them to
 > persist across deployments.
