@@ -40,54 +40,5 @@ outputs:
    status:
     description: "The Success/Failure of the action"
 runs:
-  using: "composite"
-  steps:
-    - name: Check Runner OS
-      if: ${{ runner.os != 'Linux' }}
-      shell: bash
-      run: |
-        echo "::error title=⛔ error hint::Support Linux Only"
-        exit 1
-    - name: Check for Docker Image Deploy Requirements
-      if: ${{ inputs.type == 'deploy' && (inputs.username == '' || inputs.password == '' || inputs.docker_img == '') }}
-      shell: bash
-      run: |
-        echo "::error title=⛔ error hint::Docker Image Deploy requires the Aptible username, password, and docker_img inputs"
-        exit 1
-    - name: Check for Git Push Deploy Requirements
-      if: ${{ inputs.type == 'git' && inputs.private_key == '' }}
-      shell: bash
-      run: |
-        echo "::error title=⛔ error hint::Git Push Deploy requires the private_key SSH Key associated with Aptible"
-        exit 1
-    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
-      shell: bash
-    - name: Docker Deploy
-      if: ${{ inputs.type == 'docker' }}
-      shell: bash
-      run: |
-        TOKEN=$(curl -sS -H 'Content-Type: application/hal+json' \
-          -d '{ "username": "${{ inputs.username }}", "password": "${{ inputs.password }}", "grant_type": "password", "_source": "gha" }' \
-          -X POST \
-          https://auth-sbx-main.aptible-sandbox.com/tokens | jq -r '.access_token')
-
-        if [ -z "$TOKEN" ]; then
-          echo "::error title=⛔ error hint::Invalid API Token"
-          exit 1
-        fi
-
-        curl --fail-with-body -sS -H 'Content-Type: application/hal+json' \
-          -H "Authorization: Bearer $TOKEN" \
-          -d '{ "docker_img": "${{ inputs.docker_img }}", "private_registry_username": "${{ inputs.private_registry_username }}", "private_registry_password": "${{ inputs.private_registry_password }}", "env": ${{ toJSON(inputs.config_variables) }} }' \
-          -X POST \
-          https://auth-sbx-main.aptible-sandbox.com/deploy/${{ inputs.environment }}/apps/${{ inputs.app }}
-    - name: Git Push Deploy
-      if: ${{ inputs.type == 'git' }}
-      shell: bash
-      run: |
-        REMOTE_URL="git@${{ inputs.git_remote }}:${{ inputs.environment }}/${{ inputs.app }}.git"
-        echo -e "${{ inputs.private_key }}" >__TEMP_INPUT_KEY_FILE
-        chmod 600 __TEMP_INPUT_KEY_FILE
-        git remote add aptible ${REMOTE_URL}
-        GIT_SSH_COMMAND="ssh -i __TEMP_INPUT_KEY_FILE -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" git push aptible main
-        rm __TEMP_INPUT_KEY_FILE
+  using: 'docker'
+  image: 'Dockerfile'

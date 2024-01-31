@@ -18,6 +18,8 @@ The following inputs can be used as `step.with` keys
 
 ### Required input
 
+- `username` - Aptible email login
+- `password` - Aptible password login
 - `app` - [Aptible App](https://www.aptible.com/docs/apps) handle
 - `environment` -
   [Aptible Environment](https://www.aptible.com/docs/environments) handle the
@@ -27,8 +29,7 @@ The following inputs can be used as `step.with` keys
 
 ### Optional input
 
-- `config_variables` - JSON string containing the
-  [configuration variables to set](https://www.aptible.com/docs/set-configuration-variables)
+- `config_variables` - [configuration variables to set](https://www.aptible.com/docs/set-configuration-variables)
 
 > [!IMPORTANT]\
 > We do **not** recommend setting `config_variables` inside our github action
@@ -53,12 +54,7 @@ jobs:
           app: <app name>
           environment: <environment name>
           private_key: ${{ secrets.PRIVATE_KEY }}
-          config_variables: |
-            {
-              "DEBUG": "app:*",
-              "FORCE_SSL": "true",
-              "DATABASE_URL": "${{ secrets.DATABASE_URL }}"
-            }
+          config_variables: DEBUG=app:* FORCE_SSL=true
 ```
 
 # Direct Docker Image Deploy
@@ -128,12 +124,7 @@ jobs:
           docker_img: <docker image name>
           private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
           private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
-          config_variables: |
-            {
-              "DEBUG": "app:*",
-              "FORCE_SSL": "true",
-              "DATABASE_URL": "${{ secrets.DATABASE_URL }}"
-            }
+          config_variables: DEBUG=app:* FORCE_SSL=true 
 ```
 
 ## Example using Container Build and Docker Hub
@@ -181,8 +172,5 @@ jobs:
           docker_img: ${{ env.IMAGE_NAME }}
           private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
           private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
-          config_variables: |
-            {
-              "RELEASE_SHA": "${{ github.sha }}"
-            }
+          config_variables: RELEASE_SHA=${{ github.sha }}
 ```
