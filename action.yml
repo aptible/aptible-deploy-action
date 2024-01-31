@@ -10,6 +10,7 @@ inputs:
   type:
     description: '"git" or "docker" deployment strategy'
     required: True
+    default: 'git'
   git_remote:
     description: 'Aptible git remote domain'
     required: False
@@ -41,27 +42,40 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Check Runner OS
+      if: ${{ runner.os != 'Linux' }}
+      shell: bash
+      run: |
+        echo "::error title=⛔ error hint::Support Linux Only"
+        exit 1
     - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
       shell: bash
     - name: Docker Deploy
       if: ${{ inputs.type == 'docker' }}
       shell: bash
-      run: docker.sh
-      env:
-        INPUT_USERNAME: ${{ inputs.username }}
-        INPUT_PASSWORD: ${{ inputs.password }}
-        INPUT_DOCKER_IMG: ${{ inputs.docker_img }}
-        INPUT_ENVIRONMENT: ${{ inputs.environment }}
-        INPUT_APP: ${{ inputs.app }}
-        INPUT_CONFIG_VARIABLES: ${{ inputs.config_variables }}
-        INPUT_PRIVATE_REGISTRY_USERNAME: ${{ inputs.private_registry_username }}
-        INPUT_PRIVATE_REGISTRY_PASSWORD: ${{ inputs.private_registry_password }}
+      run: |
+        TOKEN=$(curl -sS -H 'Content-Type: application/hal+json' \
+          -d '{ "username": "${{ inputs.username }}", "password": "${{ inputs.password }}", "grant_type": "password", "_source": "gha" }' \
+          -X POST \
+          https://auth-sbx-main.aptible-sandbox.com/tokens | jq -r '.access_token')
+
+        if [ -z "$TOKEN" ]; then
+          echo "::error title=⛔ error hint::Invalid API Token"
+          exit 1
+        fi
+
+        curl --fail-with-body -sS -H 'Content-Type: application/hal+json' \
+          -H "Authorization: Bearer $TOKEN" \
+          -d '{ "docker_img": "${{ inputs.docker_img }}", "private_registry_username": "${{ inputs.private_registry_username }}", "private_registry_password": "${{ inputs.private_registry_password }}", "env": ${{ toJSON(inputs.config_variables) }} }' \
+          -X POST \
+          https://auth-sbx-main.aptible-sandbox.com/deploy/${{ inputs.environment }}/apps/${{ inputs.app }}
     - name: Git Deploy
       if: ${{ inputs.type == 'git' }}
       shell: bash
-      run: git.sh
-      env:
-        INPUT_PRIVATE_KEY: ${{ inputs.private_key }}
-        INPUT_GIT_REMOTE: ${{ inputs.git_remote }}
-        INPUT_ENVIRONMENT: ${{ inputs.environment }}
-        INPUT_APP: ${{ inputs.app }}
+      run: |
+        REMOTE_URL="git@${{ inputs.git_remote }}:${{ inputs.environment }}/${{ inputs.app }}.git"
+        echo -e "${{ inputs.private_key }}" >__TEMP_INPUT_KEY_FILE
+        chmod 600 __TEMP_INPUT_KEY_FILE
+        git remote add aptible ${REMOTE_URL}
+        GIT_SSH_COMMAND="ssh -i __TEMP_INPUT_KEY_FILE -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" git push aptible main
+        rm __TEMP_INPUT_KEY_FILE
