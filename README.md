@@ -1,15 +1,10 @@
 # Github Action to deploy onto Aptible Deploy
 
-This action deploys a Docker image to [Aptible](https://www.aptible.com/). To use this image, you should use another workflow step to publish your image to a Docker image registry (for example [Docker's](https://github.com/marketplace/actions/build-and-push-docker-images)).
+This action helps you deploy Apps to [Aptible](https://www.aptible.com/).
 
-If you are using a private registry, you can optionally setup [Private Registry Authentication](https://deploy-docs.aptible.com/docs/private-registry-authentication) once ahead of time using the [Aptible CLI](https://deploy-docs.aptible.com/docs/cli). Otherwise, you can pass the credentials directly via the action.
+# Git Push Deploy
 
-```bash
-aptible config:set \
-  --app "$APP_HANDLE" \
-  "APTIBLE_PRIVATE_REGISTRY_USERNAME=$USERNAME"
-  "APTIBLE_PRIVATE_REGISTRY_PASSWORD=$PASSWORD"
-```
+[Read the docs on this strategy](https://www.aptible.com/docs/dockerfile-deploy).
 
 ## Inputs
 
@@ -17,25 +12,29 @@ The following inputs can be used as `step.with` keys
 
 ### Required input
 
-- `username` - passed to `aptible` CLI
-- `password` - passed to `aptible` CLI
-- `environment` - specifies App to be deployed
-- `app` - specifies App to be deployed
-- `docker_img` - the name of the image you’d like to deploy, including its repository and tag
+- `app` - [Aptible App](https://www.aptible.com/docs/apps) handle
+- `environment` -
+  [Aptible Environment](https://www.aptible.com/docs/environments) handle the
+  App is hosted within
+- `private_key` -
+  [Private SSH Key for Aptible](https://www.aptible.com/docs/public-key-authentication)
 
 ### Optional input
 
-- `private_registry_username` - the username for the private registry to pull a docker image from
-- `private_registry_password` - the password for the private registry to pull a docker image from
-- `config_variables` - a space separated list of key=value pairs to set as config variables on the app during deployment
+- `config_variables` - JSON string containing the
+  [configuration variables to set](https://www.aptible.com/docs/set-configuration-variables)
 
-## Outputs
+> ![NOTICE]\
+> We do **not** recommend setting `config_variables` inside our github action
+> because those variables only need to be set once within Aptible for them to
+> persist across deployments.
+> [Learn more](https://www.aptible.com/docs/set-configuration-variables).
 
-- `status` - success/failure of the deploy
+## Example using Git Push
 
-## Example github actions usage
-
-Assumes you have set [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets) (recommended).
+Assumes you have set
+[secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
+(recommended).
 
 ```yaml
 jobs:
@@ -43,22 +42,97 @@ jobs:
     runs-on: ubuntu-latest
 
       - name: Deploy to Aptible
-        uses: aptible/aptible-deploy-action@v1
+        uses: aptible/aptible-deploy-action@v2
         with:
+          app: <app name>
+          environment: <environment name>
+          private_key: ${{ secrets.PRIVATE_KEY }}
+          config_variables: |
+            {
+              "DEBUG": "app:*",
+              "FORCE_SSL": "true",
+              "DATABASE_URL": "${{ secrets.DATABASE_URL }}"
+            }
+```
+
+# Direct Docker Image Deploy
+
+[Read the docs on this strategy](https://www.aptible.com/docs/migrating-from-dockerfile-deploy).
+
+To use this image, you should use another workflow step to publish your image to
+a Docker image registry (for example
+[Docker's](https://github.com/marketplace/actions/build-and-push-docker-images)).
+
+If you are using a private registry, you can optionally setup
+[Private Registry Authentication](https://deploy-docs.aptible.com/docs/private-registry-authentication)
+once ahead of time using the
+[Aptible CLI](https://deploy-docs.aptible.com/docs/cli). Otherwise, you can pass
+the credentials directly via the action.
+
+## Inputs
+
+The following inputs can be used as `step.with` keys
+
+### Required input
+
+- `username` - Aptible email login
+- `password` - Aptible password login
+- `environment` -
+  [Aptible Environment](https://www.aptible.com/docs/environments) handle the
+  App is hosted within
+- `app` - [Aptible App](https://www.aptible.com/docs/apps) handle
+- `docker_img` - the name of the image you'd like to deploy, including its
+  repository and tag
+
+### Optional input
+
+- `private_registry_username` - the username for the private image registry
+- `private_registry_password` - the password for the private image registry
+- `config_variables` - JSON string containing the
+  [configuration variables to set](https://www.aptible.com/docs/set-configuration-variables)
+
+> ![NOTICE]\
+> We do **not** recommend setting `config_variables` inside our github action
+> because those variables only need to be set once within Aptible for them to
+> persist across deployments.
+> [Learn more](https://www.aptible.com/docs/set-configuration-variables).
+
+## Outputs
+
+- `status` - success/failure of the deploy
+
+## Example using Direct Docker Image Deploy
+
+Assumes you have set
+[secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
+(recommended).
+
+```yaml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+      - name: Deploy to Aptible
+        uses: aptible/aptible-deploy-action@v2
+        with:
+          app: <app name>
+          environment: <environment name>
           username: ${{ secrets.APTIBLE_USERNAME }}
           password: ${{ secrets.APTIBLE_PASSWORD }}
-          environment: <environment name>
-          app: <app name>
           docker_img: <docker image name>
           private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
           private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
-          config_variables: KEY1=value1 KEY2=value2
+          config_variables: |
+            {
+              "DEBUG": "app:*",
+              "FORCE_SSL": "true",
+              "DATABASE_URL": "${{ secrets.DATABASE_URL }}"
+            }
 ```
 
-## Example with Container Build and Docker Hub
+## Example using Container Build and Docker Hub
 
 ```yaml
-
 env:
   IMAGE_NAME: user/app:latest
   APTIBLE_ENVIRONMENT: "my_environment"
@@ -92,14 +166,17 @@ jobs:
           tags: ${{ env.IMAGE_NAME }}
 
       - name: Deploy to Aptible
-        uses: aptible/aptible-deploy-action@v1
+        uses: aptible/aptible-deploy-action@v2
         with:
+          app: ${{ env.APTIBLE_APP }}
+          environment: ${{ env.APTIBLE_ENVIRONMENT }}
           username: ${{ secrets.APTIBLE_USERNAME }}
           password: ${{ secrets.APTIBLE_PASSWORD }}
-          environment: ${{ env.APTIBLE_ENVIRONMENT }}
-          app: ${{ env.APTIBLE_APP }}
           docker_img: ${{ env.IMAGE_NAME }}
           private_registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
           private_registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
-          config_variables: RELEASE_SHA=${{ github.sha }}
+          config_variables: |
+            {
+              "RELEASE_SHA": "${{ github.sha }}"
+            }
 ```
