@@ -1,6 +1,12 @@
-# Github Action to deploy onto Aptible Deploy
-
 This action helps you deploy Apps to [Aptible](https://www.aptible.com/).
+
+There are two deployment strategies, both are supported in this action:
+
+- [Git Push](#git-push-deploy)
+- [Direct Docker Image](#direct-docker-image-deploy)
+
+If you are just getting started at Aptible, the easiest deployment strategy is
+[Git Push](#git-push-deploy).
 
 # Git Push Deploy
 
