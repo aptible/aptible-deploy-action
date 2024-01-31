@@ -1,5 +1,5 @@
 name: 'Deploy to Aptible'
-description: 'Deploy an app from a Dockerfile to Aptible'
+description: 'Deploy an App to Aptible'
 inputs:
   environment:
     description: 'Aptible environment handle'
@@ -8,7 +8,7 @@ inputs:
     description: 'App handle'
     required: True
   type:
-    description: '"git" or "docker" deployment strategy'
+    description: 'Deploy strategy "git" or "deploy"'
     required: True
     default: 'git'
   git_remote:
@@ -48,6 +48,18 @@ runs:
       run: |
         echo "::error title=⛔ error hint::Support Linux Only"
         exit 1
+    - name: Check for Docker Image Deploy Requirements
+      if: ${{ inputs.type == 'deploy' && (inputs.username == '' || inputs.password == '' || inputs.docker_img == '') }}
+      shell: bash
+      run: |
+        echo "::error title=⛔ error hint::Docker Image Deploy requires the Aptible username, password, and docker_img inputs"
+        exit 1
+    - name: Check for Git Push Deploy Requirements
+      if: ${{ inputs.type == 'git' && inputs.private_key == '' }}
+      shell: bash
+      run: |
+        echo "::error title=⛔ error hint::Git Push Deploy requires the private_key SSH Key associated with Aptible"
+        exit 1
     - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
       shell: bash
     - name: Docker Deploy
@@ -69,7 +81,7 @@ runs:
           -d '{ "docker_img": "${{ inputs.docker_img }}", "private_registry_username": "${{ inputs.private_registry_username }}", "private_registry_password": "${{ inputs.private_registry_password }}", "env": ${{ toJSON(inputs.config_variables) }} }' \
           -X POST \
           https://auth-sbx-main.aptible-sandbox.com/deploy/${{ inputs.environment }}/apps/${{ inputs.app }}
-    - name: Git Deploy
+    - name: Git Push Deploy
       if: ${{ inputs.type == 'git' }}
       shell: bash
       run: |
