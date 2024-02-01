@@ -18,6 +18,7 @@ The following inputs can be used as `step.with` keys
 
 ### Required input
 
+- `type` - set to `git`
 - `username` - Aptible email login
 - `password` - Aptible password login
 - `app` - [Aptible App](https://www.aptible.com/docs/apps) handle
@@ -49,10 +50,11 @@ jobs:
       - name: Deploy to Aptible
         uses: aptible/aptible-deploy-action@v2
         with:
-          username: ${{ secrets.APTIBLE_USERNAME }}
-          password: ${{ secrets.APTIBLE_PASSWORD }}
+          type: git
           app: <app name>
           environment: <environment name>
+          username: ${{ secrets.APTIBLE_USERNAME }}
+          password: ${{ secrets.APTIBLE_PASSWORD }}
 ```
 
 # Direct Docker Image Deploy
@@ -75,6 +77,7 @@ The following inputs can be used as `step.with` keys
 
 ### Required input
 
+- `type` - set to `docker`
 - `username` - Aptible email login
 - `password` - Aptible password login
 - `environment` -
@@ -115,6 +118,7 @@ jobs:
       - name: Deploy to Aptible
         uses: aptible/aptible-deploy-action@v2
         with:
+          type: docker 
           app: <app name>
           environment: <environment name>
           username: ${{ secrets.APTIBLE_USERNAME }}
@@ -163,6 +167,7 @@ jobs:
       - name: Deploy to Aptible
         uses: aptible/aptible-deploy-action@v2
         with:
+          type: docker 
           app: ${{ env.APTIBLE_APP }}
           environment: ${{ env.APTIBLE_ENVIRONMENT }}
           username: ${{ secrets.APTIBLE_USERNAME }}
