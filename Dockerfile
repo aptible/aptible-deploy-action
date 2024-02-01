@@ -7,6 +7,8 @@ ARG CLI_TIMESTAMP="20200812001454"
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		jq \
 		u2f-host \
+    git \
+    openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp/aptible-cli

@@ -31,18 +31,11 @@ if ! APTIBLE_OUTPUT_FORMAT=json aptible apps | jq -e ".[] | select(.handle == \"
 fi
 
 if [ "$INPUT_TYPE" == "git" ]; then
-  if [ -z "$INPUT_PRIVATE_KEY" ]; then
-    echo "Aborting: private_key is not set"
-    exit 1
-  fi
-
-  REMOTE_URL="git@$INPUT_GIT_REMOTE:$INPUT_ENVIRONMENT/$INPUT_APP.git"
-  echo -e "$INPUT_PRIVATE_KEY" >__TEMP_INPUT_KEY_FILE
-  chmod 600 __TEMP_INPUT_KEY_FILE
+  export ACCESS_TOKEN=$(cat "$HOME/.aptible/tokens.json" | jq '.["https://auth.aptible.com"]' -r)
+  REMOTE_URL="root@$INPUT_GIT_REMOTE:$INPUT_ENVIRONMENT/$INPUT_APP.git"
   git remote add aptible ${REMOTE_URL}
   BRANCH="deploy-$(date "+%s")"
-  GIT_SSH_COMMAND="ssh -i __TEMP_INPUT_KEY_FILE -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" git push aptible "main:$BRANCH"
-  rm __TEMP_INPUT_KEY_FILE
+  GIT_SSH_COMMAND="ssh -o SendEnv=ACCESS_TOKEN -o PubkeyAuthentication=no -o StrictHostKeyChecking=no -p 43022" git push aptible "main:$BRANCH"
 
   aptible deploy --environment "$INPUT_ENVIRONMENT" \
                  --app "$INPUT_APP" \

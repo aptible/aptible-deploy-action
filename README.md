@@ -24,8 +24,6 @@ The following inputs can be used as `step.with` keys
 - `environment` -
   [Aptible Environment](https://www.aptible.com/docs/environments) handle the
   App is hosted within
-- `private_key` -
-  [Private SSH Key for Aptible](https://www.aptible.com/docs/public-key-authentication)
 
 ### Optional input
 
@@ -51,10 +49,10 @@ jobs:
       - name: Deploy to Aptible
         uses: aptible/aptible-deploy-action@v2
         with:
+          username: ${{ secrets.APTIBLE_USERNAME }}
+          password: ${{ secrets.APTIBLE_PASSWORD }}
           app: <app name>
           environment: <environment name>
-          private_key: ${{ secrets.PRIVATE_KEY }}
-          config_variables: DEBUG=app:* FORCE_SSL=true
 ```
 
 # Direct Docker Image Deploy

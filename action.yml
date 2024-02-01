@@ -1,6 +1,12 @@
 name: 'Deploy to Aptible'
 description: 'Deploy an App to Aptible'
 inputs:
+  username:
+    description: 'Aptible username'
+    required: True
+  password:
+    description: 'Aptible password'
+    required: True
   environment:
     description: 'Aptible environment handle'
     required: True
@@ -14,16 +20,7 @@ inputs:
   git_remote:
     description: 'Aptible git remote domain'
     required: False
-    default: git.aptible.com
-  private_key:
-    description: 'Private SSH Key for pushing to Aptible remote'
-    required: False
-  username:
-    description: 'Aptible username'
-    required: False
-  password:
-    description: 'Aptible password'
-    required: False
+    default: elb-aptible-us-east-1-81550.aptible.in
   docker_img:
     description: 'Docker image'
     required: False
@@ -41,4 +38,5 @@ outputs:
     description: "The Success/Failure of the action"
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  # image: 'Dockerfile'
+  image: docker://quay.io/aptible/aptible-deploy-action:v2
