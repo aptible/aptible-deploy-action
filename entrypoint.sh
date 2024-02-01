@@ -34,12 +34,12 @@ if [ "$INPUT_TYPE" == "git" ]; then
   export ACCESS_TOKEN=$(cat "$HOME/.aptible/tokens.json" | jq '.["https://auth.aptible.com"]' -r)
   REMOTE_URL="root@$INPUT_GIT_REMOTE:$INPUT_ENVIRONMENT/$INPUT_APP.git"
   git remote add aptible ${REMOTE_URL}
-  BRANCH="deploy-$(date "+%s")"
-  GIT_SSH_COMMAND="ssh -o SendEnv=ACCESS_TOKEN -o PubkeyAuthentication=no -o StrictHostKeyChecking=no -p 43022" git push aptible "main:$BRANCH"
+  REMOTE_BRANCH="deploy-$(date "+%s")"
+  GIT_SSH_COMMAND="ssh -o SendEnv=ACCESS_TOKEN -o PubkeyAuthentication=no -o StrictHostKeyChecking=no -p 43022" git push aptible "$GITHUB_BRANCH:$REMOTE_BRANCH"
 
   aptible deploy --environment "$INPUT_ENVIRONMENT" \
                  --app "$INPUT_APP" \
-                 --git-commitish "$BRANCH" \
+                 --git-commitish "$REMOTE_BRANCH" \
                  ${INPUT_CONFIG_VARIABLES}
 fi
 
