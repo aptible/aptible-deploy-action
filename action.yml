@@ -20,7 +20,7 @@ inputs:
   git_remote:
     description: 'Aptible git remote domain'
     required: False
-    default: elb-aptible-us-east-1-81550.aptible.in
+    default: primetime.aptible.com
   docker_img:
     description: 'Docker image'
     required: False
