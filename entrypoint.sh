@@ -35,7 +35,7 @@ if [ "$INPUT_TYPE" == "git" ]; then
   REMOTE_URL="root@$INPUT_GIT_REMOTE:$INPUT_ENVIRONMENT/$INPUT_APP.git"
   git remote add aptible ${REMOTE_URL}
   REMOTE_BRANCH="deploy-$(date "+%s")"
-  GIT_SSH_COMMAND="ssh -o SendEnv=ACCESS_TOKEN -o PubkeyAuthentication=no -p 43022" git push aptible "$GITHUB_BRANCH:$REMOTE_BRANCH"
+  GIT_SSH_COMMAND="ssh -o SendEnv=ACCESS_TOKEN -o PubkeyAuthentication=no -p 43022" git push aptible "$INPUT_BRANCH:$REMOTE_BRANCH"
 
   aptible deploy --environment "$INPUT_ENVIRONMENT" \
                  --app "$INPUT_APP" \
