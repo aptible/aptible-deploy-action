@@ -16,7 +16,6 @@ inputs:
   type:
     description: 'Deploy strategy "git" or "deploy"'
     required: True
-    default: git
   git_remote:
     description: 'Aptible git remote domain'
     required: False

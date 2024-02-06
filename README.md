@@ -18,6 +18,7 @@ The following inputs can be used as `step.with` keys
 
 ### Required input
 
+- `type` - set to `git`
 - `username` - Aptible email login
 - `password` - Aptible password login
 - `app` - [Aptible App](https://www.aptible.com/docs/apps) handle
@@ -49,6 +50,7 @@ jobs:
       - name: Deploy to Aptible
         uses: aptible/aptible-deploy-action@v2
         with:
+          type: git
           app: <app name>
           environment: <environment name>
           username: ${{ secrets.APTIBLE_USERNAME }}
