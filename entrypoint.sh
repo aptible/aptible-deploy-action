@@ -31,13 +31,22 @@ if ! APTIBLE_OUTPUT_FORMAT=json aptible apps | jq -e ".[] | select(.handle == \"
 fi
 
 if [ "$INPUT_TYPE" == "git" ]; then
+  BRANCH="$GITHUB_HEAD_REF"
+  if [ -z "$BRANCH" ]; then
+    BRANCH="$GITHUB_REF_NAME"
+  fi
+  if [ -z "$BRANCH" ]; then
+    echo "Aborting: branch is not set; this shouldn't happen, please contact support"
+    exit 1
+  fi
+
   echo "[primetime.aptible.com]:43022 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCqkrJJ7YE0MV/x0PcWsCdAjDIZQcicSLnDdn8s8GbdektPGsW/rw+rXMYx8Xb4IEGzfgY5Y5lJVwkV5B0BFr4xMX4zgkYf4f/PmJjCu5UuU3PZwAH85UPB0OYk62ixEOxAt6A7Y6TyvlUPB1CU6LYLAVSqtF0F/z1tUA+Nqhx3Ggp/jthvhKXFgLJN1zzEmR1+Kx2qSZYKD7mnkv/S+ARmOmJgy4ZpowTb3ZIbYvWQIZzWSjMevVeTq/nak3CeCSn/AO/s3odBGtdS3dUY8b3UzccndAZtpqrdy6m7L9ZkrFDR4pxcjBSwcpNpLeIZSXaTXQted5GnqKMQjQQTXyuF" >> ./known_hosts
   echo "[primetime.aptible.com]:43022 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNI5kkrUH3BcV3tNnXvA+BOaH33jYfgbgnOFFd3XK6T/agNaWpVdIOYi+yZkP+j+DWS6sNCtqST9L3y3WtacZgQ=" >> ./known_hosts
   export ACCESS_TOKEN=$(cat "$HOME/.aptible/tokens.json" | jq '.["https://auth.aptible.com"]' -r)
   REMOTE_URL="root@$INPUT_GIT_REMOTE:$INPUT_ENVIRONMENT/$INPUT_APP.git"
   git remote add aptible ${REMOTE_URL}
   REMOTE_BRANCH="deploy-$(date "+%s")"
-  GIT_SSH_COMMAND="ssh -o SendEnv=ACCESS_TOKEN -o PubkeyAuthentication=no -o UserKnownHostsFile=./known_hosts -p 43022" git push aptible "$INPUT_BRANCH:$REMOTE_BRANCH"
+  GIT_SSH_COMMAND="ssh -o SendEnv=ACCESS_TOKEN -o PubkeyAuthentication=no -o UserKnownHostsFile=./known_hosts -p 43022" git push aptible "$BRANCH:$REMOTE_BRANCH"
 
   aptible deploy --environment "$INPUT_ENVIRONMENT" \
                  --app "$INPUT_APP" \
