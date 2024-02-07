@@ -59,7 +59,7 @@ jobs:
 
 # Direct Docker Image Deploy
 
-[Read the docs on this strategy](https://www.aptible.com/docs/migrating-from-dockerfile-deploy).
+[Read the docs on this strategy](https://www.aptible.com/docs/direct-docker-image-deploy-example).
 
 To use this image, you should use another workflow step to publish your image to
 a Docker image registry (for example
