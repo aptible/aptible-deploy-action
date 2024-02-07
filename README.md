@@ -66,7 +66,7 @@ a Docker image registry (for example
 [Docker's](https://github.com/marketplace/actions/build-and-push-docker-images)).
 
 If you are using a private registry, you can optionally setup
-[Private Registry Authentication](https://deploy-docs.aptible.com/docs/private-registry-authentication)
+[Private Registry Authentication](https://www.aptible.com/docs/direct-docker-image-deploy#private-registry-authentication)
 once ahead of time using the
 [Aptible CLI](https://deploy-docs.aptible.com/docs/cli). Otherwise, you can pass
 the credentials directly via the action.
