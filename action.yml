@@ -1,6 +1,5 @@
-# action.yml
 name: 'Deploy to Aptible'
-description: 'Deploy an app from a Dockerfile to Aptible'
+description: 'Deploy an App to Aptible'
 inputs:
   username:
     description: 'Aptible username'
@@ -8,15 +7,22 @@ inputs:
   password:
     description: 'Aptible password'
     required: True
-  environment: 
-    description: 'Aptible environment'
+  environment:
+    description: 'Aptible environment handle'
     required: True
-  app: 
+  app:
     description: 'App handle'
     required: True
-  docker_img: 
-    description: 'Docker image'
+  type:
+    description: 'Deploy strategy "git" or "deploy"'
     required: True
+  git_remote:
+    description: 'Aptible git remote domain'
+    required: False
+    default: primetime.aptible.com
+  docker_img:
+    description: 'Docker image'
+    required: False
   private_registry_username:
     description: 'Private Registry Username'
     required: False
@@ -31,4 +37,5 @@ outputs:
     description: "The Success/Failure of the action"
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  # image: 'Dockerfile'
+  image: docker://quay.io/aptible/aptible-deploy-action:v2
