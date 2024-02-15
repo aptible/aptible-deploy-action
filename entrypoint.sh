@@ -36,7 +36,7 @@ if [ "$INPUT_TYPE" == "git" ]; then
     BRANCH="$GITHUB_REF_NAME"
   fi
   if [ -z "$BRANCH" ]; then
-    echo "Aborting: branch is not set; this shouldn't happen, please contact support"
+    echo "Aborting: branch is not set; this shouldn't happen, please contact support: https://www.aptible.com/docs/support"
     exit 1
   fi
 

@@ -14,7 +14,7 @@ inputs:
     description: 'App handle'
     required: True
   type:
-    description: 'Deploy strategy "git" or "deploy"'
+    description: 'Deploy strategy "git" or "docker"'
     required: True
     default: 'docker'
   git_remote:
