@@ -39,4 +39,4 @@ outputs:
 runs:
   using: 'docker'
   # image: 'Dockerfile'
-  image: docker://quay.io/aptible/aptible-deploy-action:v2
+  image: docker://quay.io/aptible/aptible-deploy-action:v4
