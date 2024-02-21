@@ -40,8 +40,8 @@ if [ "$INPUT_TYPE" == "git" ]; then
     exit 1
   fi
 
-  echo "[primetime.aptible.com]:43022 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCqkrJJ7YE0MV/x0PcWsCdAjDIZQcicSLnDdn8s8GbdektPGsW/rw+rXMYx8Xb4IEGzfgY5Y5lJVwkV5B0BFr4xMX4zgkYf4f/PmJjCu5UuU3PZwAH85UPB0OYk62ixEOxAt6A7Y6TyvlUPB1CU6LYLAVSqtF0F/z1tUA+Nqhx3Ggp/jthvhKXFgLJN1zzEmR1+Kx2qSZYKD7mnkv/S+ARmOmJgy4ZpowTb3ZIbYvWQIZzWSjMevVeTq/nak3CeCSn/AO/s3odBGtdS3dUY8b3UzccndAZtpqrdy6m7L9ZkrFDR4pxcjBSwcpNpLeIZSXaTXQted5GnqKMQjQQTXyuF" >> ./known_hosts
-  echo "[primetime.aptible.com]:43022 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNI5kkrUH3BcV3tNnXvA+BOaH33jYfgbgnOFFd3XK6T/agNaWpVdIOYi+yZkP+j+DWS6sNCtqST9L3y3WtacZgQ=" >> ./known_hosts
+  echo "[primetime.aptible.com]:43022 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQClUA3SfI+5YthgM/tZ2k1oCYgK+8KbhbVeMdhgHqyKuY/lh7If13MBpxJzyRWs7YEJc+I0D1y3BRQlUe5+xBp4yYKCsbzKJDIvIx/fWWYQugrtxCskXxCQreNzONoB3ibaHQ21N1xCMk+CgLeu+PpCwb1bOxnu+aoz6o73NdOZLnlvadGlojs59datshEyY+l/ZikZ2TIOZUqdzrF3ValivNV9dQeskNLIYdlKkjoO/E+xg/wV9T8LMFa1VXqWiF9+LWuoiCfGqfk6Xz33DPrADtiMKOJj9uWshwxr5L2HAN+aLz2SAW9aaDwHObLMkThhtwJ3qOg+QGGzVOZQpxkOShYb5ByemhKKL6fHo5c2wVOq0QCmoaG/GfGZm24dRdBgj2GHrr1BAQCIN6LDYVU/NHOAgOzdgsGljbtrZ6RGx9waE/QYCnnG6rUz0o7Y+cQOotiQvu2CxOccpkiwwn+olkCrzrApWgs4yloM7mfvsXjCctJHv7ClwUP/iiYpxkc=" >> ./known_hosts
+  echo "[primetime.aptible.com]:43022 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEHFh32OAG4rBx9Nisn2RBVbVxkKNrWi/4M6Q44fVwKZEFSUaAJifIk97zd8MhFcsV1WfvOUGIH3s9Png/mWh3A=" >> ./known_hosts
   export ACCESS_TOKEN=$(cat "$HOME/.aptible/tokens.json" | jq '.["https://auth.aptible.com"]' -r)
   REMOTE_URL="root@$INPUT_GIT_REMOTE:$INPUT_ENVIRONMENT/$INPUT_APP.git"
   git remote add aptible ${REMOTE_URL}
