@@ -33,10 +33,13 @@ inputs:
   config_variables:
     description: 'Configuration variables to set on deploy'
     required: False
+  docker_repository_url:
+    description: 'URL for docker image repository'
+    required: False
 outputs:
-   status:
+  status:
     description: "The Success/Failure of the action"
 runs:
   using: 'docker'
   # image: 'Dockerfile'
-  image: docker://quay.io/aptible/aptible-deploy-action:v4
+  image: docker://quay.io/aptible/aptible-deploy-action:git-metadata
