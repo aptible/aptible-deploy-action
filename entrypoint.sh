@@ -23,11 +23,11 @@ fi
 
 export APTIBLE_AUTH_ROOT_URL="$INPUT_AUTH_ROOT_URL"
 
-if [ -z "$INPUT_API_ROOT_URL" ]; then
+if [ -n "$INPUT_API_ROOT_URL" ]; then
   export APTIBLE_API_ROOT_URL="$INPUT_API_ROOT_URL"
 fi
 
-if [ -z "$INPUT_APTIBLE_REMOTE" ]; then
+if [ -n "$INPUT_APTIBLE_REMOTE" ]; then
   export APTIBLE_REMOTE="$INPUT_APTIBLE_REMOTE"
 fi
 
