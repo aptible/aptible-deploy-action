@@ -57,13 +57,16 @@ GIT_CONFIG_VARIABLES="APTIBLE_GIT_COMMIT_SHA=$COMMIT_SHA APTIBLE_GIT_REPO_URL=$R
 COMMIT_MESSAGE=$(git log -n 1 --pretty=format:'%s%n')
 
 if [ "$INPUT_TYPE" == "git" ]; then
-  echo "[primetime.aptible.com]:43022 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQClUA3SfI+5YthgM/tZ2k1oCYgK+8KbhbVeMdhgHqyKuY/lh7If13MBpxJzyRWs7YEJc+I0D1y3BRQlUe5+xBp4yYKCsbzKJDIvIx/fWWYQugrtxCskXxCQreNzONoB3ibaHQ21N1xCMk+CgLeu+PpCwb1bOxnu+aoz6o73NdOZLnlvadGlojs59datshEyY+l/ZikZ2TIOZUqdzrF3ValivNV9dQeskNLIYdlKkjoO/E+xg/wV9T8LMFa1VXqWiF9+LWuoiCfGqfk6Xz33DPrADtiMKOJj9uWshwxr5L2HAN+aLz2SAW9aaDwHObLMkThhtwJ3qOg+QGGzVOZQpxkOShYb5ByemhKKL6fHo5c2wVOq0QCmoaG/GfGZm24dRdBgj2GHrr1BAQCIN6LDYVU/NHOAgOzdgsGljbtrZ6RGx9waE/QYCnnG6rUz0o7Y+cQOotiQvu2CxOccpkiwwn+olkCrzrApWgs4yloM7mfvsXjCctJHv7ClwUP/iiYpxkc=" >> ./known_hosts
-  echo "[primetime.aptible.com]:43022 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEHFh32OAG4rBx9Nisn2RBVbVxkKNrWi/4M6Q44fVwKZEFSUaAJifIk97zd8MhFcsV1WfvOUGIH3s9Png/mWh3A=" >> ./known_hosts
+  touch ./known_hosts
+  if [ "$INPUT_GIT_REMOTE" == "primetime.aptible.com" ]; then
+    echo "[primetime.aptible.com]:43022 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQClUA3SfI+5YthgM/tZ2k1oCYgK+8KbhbVeMdhgHqyKuY/lh7If13MBpxJzyRWs7YEJc+I0D1y3BRQlUe5+xBp4yYKCsbzKJDIvIx/fWWYQugrtxCskXxCQreNzONoB3ibaHQ21N1xCMk+CgLeu+PpCwb1bOxnu+aoz6o73NdOZLnlvadGlojs59datshEyY+l/ZikZ2TIOZUqdzrF3ValivNV9dQeskNLIYdlKkjoO/E+xg/wV9T8LMFa1VXqWiF9+LWuoiCfGqfk6Xz33DPrADtiMKOJj9uWshwxr5L2HAN+aLz2SAW9aaDwHObLMkThhtwJ3qOg+QGGzVOZQpxkOShYb5ByemhKKL6fHo5c2wVOq0QCmoaG/GfGZm24dRdBgj2GHrr1BAQCIN6LDYVU/NHOAgOzdgsGljbtrZ6RGx9waE/QYCnnG6rUz0o7Y+cQOotiQvu2CxOccpkiwwn+olkCrzrApWgs4yloM7mfvsXjCctJHv7ClwUP/iiYpxkc=" >> ./known_hosts
+    echo "[primetime.aptible.com]:43022 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEHFh32OAG4rBx9Nisn2RBVbVxkKNrWi/4M6Q44fVwKZEFSUaAJifIk97zd8MhFcsV1WfvOUGIH3s9Png/mWh3A=" >> ./known_hosts
+  fi
   export ACCESS_TOKEN=$(cat "$HOME/.aptible/tokens.json" | jq ".[\"$APTIBLE_AUTH_ROOT_URL\"]" -r)
   REMOTE_URL="root@$INPUT_GIT_REMOTE:$INPUT_ENVIRONMENT/$INPUT_APP.git"
   git remote add aptible ${REMOTE_URL}
   REMOTE_BRANCH="deploy-$(date "+%s")"
-  GIT_SSH_COMMAND="ssh -o SendEnv=ACCESS_TOKEN -o PubkeyAuthentication=no -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 43022" git push aptible "$BRANCH:$REMOTE_BRANCH"
+  GIT_SSH_COMMAND="ssh -o SendEnv=ACCESS_TOKEN -o PubkeyAuthentication=no -o UserKnownHostsFile=./known_hosts -p 43022" git push aptible "$BRANCH:$REMOTE_BRANCH"
 
   aptible deploy --environment "$INPUT_ENVIRONMENT" \
                  --app "$INPUT_APP" \
