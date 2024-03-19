@@ -22,14 +22,8 @@ if [ -z "$INPUT_APP" ]; then
 fi
 
 export APTIBLE_AUTH_ROOT_URL="$INPUT_AUTH_ROOT_URL"
-
-if [ -n "$INPUT_API_ROOT_URL" ]; then
-  export APTIBLE_API_ROOT_URL="$INPUT_API_ROOT_URL"
-fi
-
-if [ -n "$INPUT_APTIBLE_REMOTE" ]; then
-  export APTIBLE_REMOTE="$INPUT_APTIBLE_REMOTE"
-fi
+export APTIBLE_API_ROOT_URL="$INPUT_API_ROOT_URL"
+export APTIBLE_REMOTE="$INPUT_APTIBLE_REMOTE"
 
 aptible login \
   --email "$INPUT_USERNAME" \
