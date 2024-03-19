@@ -93,8 +93,6 @@ The following inputs can be used as `step.with` keys
 - `private_registry_password` - the password for the private image registry
 - `config_variables` - JSON string containing the
   [configuration variables to set](https://www.aptible.com/docs/set-configuration-variables)
-- `docker_repository_url` - Provide docker repository URL which we can display
-  in our web UI
 
 > [!IMPORTANT]\
 > We do **not** recommend setting `config_variables` inside our github action
