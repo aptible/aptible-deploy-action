@@ -29,6 +29,7 @@ The following inputs can be used as `step.with` keys
 ### Optional input
 
 - `config_variables` - [configuration variables to set](https://www.aptible.com/docs/set-configuration-variables)
+- `docker_repository_url` - the browser-accessible URL to your Docker image to be displayed in the Aptible dashboard.
 
 > [!IMPORTANT]\
 > We do **not** recommend setting `config_variables` inside our github action
@@ -47,6 +48,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
     - name: Deploy to Aptible
       uses: aptible/aptible-deploy-action@v4
       with:
@@ -56,6 +58,9 @@ jobs:
         username: ${{ secrets.APTIBLE_USERNAME }}
         password: ${{ secrets.APTIBLE_PASSWORD }}
 ```
+
+> Note: checking out your code before deploying will allow the action to send commit metadata along with your deploy
+> and display it in the Aptible dashboard.
 
 # Direct Docker Image Deploy
 
