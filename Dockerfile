@@ -1,10 +1,7 @@
-FROM buildpack-deps:xenial-curl
+FROM buildpack-deps:noble-curl
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-		jq \
-		u2f-host \
-    git \
-    openssh-client \
+    jq u2f-host git openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp/aptible-cli
