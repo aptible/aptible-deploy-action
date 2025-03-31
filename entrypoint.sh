@@ -61,9 +61,10 @@ if [ "$INPUT_TYPE" == "git" ]; then
   fi
   export ACCESS_TOKEN=$(cat "$HOME/.aptible/tokens.json" | jq ".[\"$APTIBLE_AUTH_ROOT_URL\"]" -r)
   REMOTE_URL="root@$INPUT_GIT_REMOTE:$INPUT_ENVIRONMENT/$INPUT_APP.git"
+  git config --global --add safe.directory /github/workspace
   git remote add aptible ${REMOTE_URL}
   REMOTE_BRANCH="deploy-$(date "+%s")"
-  GIT_SSH_COMMAND="ssh -o SendEnv=ACCESS_TOKEN -o PubkeyAuthentication=no -o UserKnownHostsFile=./known_hosts -p 43022" git -c safe.directory='*' push aptible "$BRANCH:$REMOTE_BRANCH"
+  GIT_SSH_COMMAND="ssh -o SendEnv=ACCESS_TOKEN -o PubkeyAuthentication=no -o UserKnownHostsFile=./known_hosts -p 43022" git push aptible "$BRANCH:$REMOTE_BRANCH"
 
   aptible deploy --environment "$INPUT_ENVIRONMENT" \
                  --app "$INPUT_APP" \
