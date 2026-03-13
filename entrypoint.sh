@@ -29,7 +29,7 @@ aptible login \
   --email "$INPUT_USERNAME" \
   --password "$INPUT_PASSWORD"
 
-if ! APTIBLE_OUTPUT_FORMAT=json aptible apps | jq -e ".[] | select(.handle == \"$INPUT_APP\") | select(.environment.handle == \"$INPUT_ENVIRONMENT\")" > /dev/null; then
+if ! APTIBLE_OUTPUT_FORMAT=json aptible apps --environment "${INPUT_ENVIRONMENT}" | jq -e ".[] | select(.handle == \"$INPUT_APP\")" > /dev/null; then
   echo "Could not find app $INPUT_APP in $INPUT_ENVIRONMENT" >&2
   exit 1
 fi
