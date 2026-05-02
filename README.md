@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Deploy to Aptible
-      uses: aptible/aptible-deploy-action@v4
+      uses: aptible/aptible-deploy-action@v5
       with:
         type: git
         app: <app name>
@@ -118,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Deploy to Aptible
-      uses: aptible/aptible-deploy-action@v4
+      uses: aptible/aptible-deploy-action@v5
       with:
         type: docker 
         app: <app name>
@@ -167,7 +167,7 @@ jobs:
         tags: ${{ env.IMAGE_NAME }}
 
     - name: Deploy to Aptible
-      uses: aptible/aptible-deploy-action@v4
+      uses: aptible/aptible-deploy-action@v5
       with:
         type: docker 
         app: ${{ env.APTIBLE_APP }}
